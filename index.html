@@ -70,6 +70,12 @@
 
     </section>
 
+    <!-- Confirmation après clôture de séance -->
+    <div id="liveSessionConfirmation" class="card hidden" style="display: flex; align-items: center; justify-content: space-between; padding: 18px; gap: 16px; background-color: #dcfce7;">
+      <span>La séance à bien été enregistrée</span>
+      <button id="btnViewSessionDetail" class="btn btn--primary" type="button">Voir le détail de la séance</button>
+    </div>
+
     <!-- Classement et Historique côte à côte -->
     <div class="layoutTwoColumns">
       <!-- Classement à gauche -->
@@ -211,10 +217,6 @@
           </table>
         </div>
       </div>
-
-      <div class="modal__foot">
-        <button class="btn btn--primary" value="close" type="submit">Fermer</button>
-      </div>
     </form>
   </dialog>
 
@@ -258,10 +260,6 @@
 
       <div class="modal__body">
         <div id="archivesContent"></div>
-      </div>
-
-      <div class="modal__foot">
-        <button class="btn btn--primary" value="close" type="submit">Fermer</button>
       </div>
     </form>
   </dialog>

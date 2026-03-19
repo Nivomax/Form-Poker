@@ -156,6 +156,9 @@ const liveSessionBody = document.getElementById("liveSessionBody");
 const btnAddRow = document.getElementById("btnAddRow");
 const btnCloseSession = document.getElementById("btnCloseSession");
 
+const liveSessionConfirmation = document.getElementById("liveSessionConfirmation");
+const btnViewSessionDetail = document.getElementById("btnViewSessionDetail");
+
 const detailModal = document.getElementById("detailModal");
 const detailDate = document.getElementById("detailDate");
 const detailCount = document.getElementById("detailCount");
@@ -736,6 +739,7 @@ function closeSession() {
     })),
   };
 
+  const closedSessionId = liveSession.id;
   sessions.push(persisted);
   saveJSON(LS_KEYS.sessions, sessions);
 
@@ -743,6 +747,13 @@ function closeSession() {
   liveSession = null;
   liveSessionSection.classList.add("hidden");
   liveSessionBody.innerHTML = "";
+
+  // show confirmation
+  liveSessionConfirmation.classList.remove("hidden");
+  btnViewSessionDetail.onclick = () => {
+    liveSessionConfirmation.classList.add("hidden");
+    openSessionDetail(closedSessionId);
+  };
 
   // refresh UI
   renderSessionsGrid();
