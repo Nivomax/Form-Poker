@@ -81,6 +81,11 @@
       <span>Gagnant du tournoi enregistré</span>
     </div>
 
+    <!-- Confirmation après ajout d'un membre -->
+    <div id="playerConfirmation" class="card hidden" style="display: flex; align-items: center; justify-content: flex-start; padding: 18px; gap: 16px; background-color: #dcfce7;">
+      <span>Nouveau membre ajouté</span>
+    </div>
+
     <!-- Classement et Historique côte à côte -->
     <div class="layoutTwoColumns">
       <!-- Classement à gauche -->
@@ -196,11 +201,11 @@
 
       <div class="modal__body">
         <div class="detailTop">
-          <div class="kv">
+          <div class="kv" style="display: flex; align-items: center; gap: 12px;">
             <div class="kv__k">Date</div>
             <div class="kv__v" id="detailDate"></div>
           </div>
-          <div class="kv">
+          <div class="kv" style="display: flex; align-items: center; gap: 12px;">
             <div class="kv__k">Participants</div>
             <div class="kv__v" id="detailCount"></div>
           </div>
@@ -254,7 +259,7 @@
   </dialog>
 
   <!-- Modal archives (séances/tournois supprimés) -->
-  <dialog id="archivesModal" class="modal" style="width: 40em;">
+  <dialog id="archivesModal" class="modal" style="width: 70em;">
     <form method="dialog" class="modal__card modal__card--wide" style="padding: 16px;">
       <div class="modal__head" style="align-items: center;">
         <div>

@@ -162,6 +162,8 @@ const btnViewSessionDetail = document.getElementById("btnViewSessionDetail");
 
 const tournamentConfirmation = document.getElementById("tournamentConfirmation");
 
+const playerConfirmation = document.getElementById("playerConfirmation");
+
 const detailModal = document.getElementById("detailModal");
 const detailDate = document.getElementById("detailDate");
 const detailCount = document.getElementById("detailCount");
@@ -507,16 +509,26 @@ function renderArchives() {
     return;
   }
 
+  // Conteneur principal pour afficher séances et tournois côte à côte
+  const mainContainer = document.createElement("div");
+  mainContainer.style.display = "flex";
+  mainContainer.style.gap = "24px";
+  mainContainer.style.flexWrap = "wrap";
+
   // Sections supprimés
   if (archivedSessions.length > 0) {
+    const sessionsSection = document.createElement("div");
+    sessionsSection.style.flex = "1";
+    sessionsSection.style.minWidth = "250px";
+
     const sessionsTitle = document.createElement("h3");
     sessionsTitle.textContent = "Séances supprimées";
     sessionsTitle.style.marginTop = "0";
     sessionsTitle.style.marginBottom = "12px";
-    archivesContent.appendChild(sessionsTitle);
+    sessionsSection.appendChild(sessionsTitle);
 
     const sessionsList = document.createElement("div");
-    sessionsList.style.marginBottom = "24px";
+    sessionsList.style.marginBottom = "0";
 
     for (const s of archivedSessions) {
       const div = document.createElement("div");
@@ -564,16 +576,21 @@ function renderArchives() {
       sessionsList.appendChild(div);
     }
 
-    archivesContent.appendChild(sessionsList);
+    sessionsSection.appendChild(sessionsList);
+    mainContainer.appendChild(sessionsSection);
   }
 
   // Tournois supprimés
   if (archivedTournaments.length > 0) {
+    const tournamentsSection = document.createElement("div");
+    tournamentsSection.style.flex = "1";
+    tournamentsSection.style.minWidth = "250px";
+
     const tournamentsTitle = document.createElement("h3");
     tournamentsTitle.textContent = "Tournois supprimés";
     tournamentsTitle.style.marginTop = "0";
     tournamentsTitle.style.marginBottom = "12px";
-    archivesContent.appendChild(tournamentsTitle);
+    tournamentsSection.appendChild(tournamentsTitle);
 
     const tournamentsList = document.createElement("div");
 
@@ -608,8 +625,11 @@ function renderArchives() {
       tournamentsList.appendChild(div);
     }
 
-    archivesContent.appendChild(tournamentsList);
+    tournamentsSection.appendChild(tournamentsList);
+    mainContainer.appendChild(tournamentsSection);
   }
+
+  archivesContent.appendChild(mainContainer);
 }
 
 /* =========================
@@ -1017,6 +1037,12 @@ confirmAddPlayer.addEventListener("click", (e) => {
   
   // Fermer le modal
   addPlayerModal.close();
+  
+  // show confirmation
+  playerConfirmation.classList.remove("hidden");
+  setTimeout(() => {
+    playerConfirmation.classList.add("hidden");
+  }, 3000);
   
   // rafraîchir l'UI (classement)
   renderRanking();
