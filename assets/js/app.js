@@ -40,6 +40,7 @@ function pad2(n) { return String(n).padStart(2, "0"); }
 
 function formatDateISOToFR(iso) {
   // iso: YYYY-MM-DD
+  if (!iso) return "—";
   const [y, m, d] = iso.split("-").map(Number);
   return `${pad2(d)}/${pad2(m)}/${y}`;
 }
