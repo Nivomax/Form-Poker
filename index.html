@@ -29,26 +29,26 @@
     <section class="card card--action">
       <button id="btnOpenSession" class="btn btn--secondary" type="button">Ouvrir une séance</button>
       <button id="btnWinnerTournament" class="btn btn--secondary" type="button">Gagnant tournoi</button>
-      <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un membre au classement</button>
-      <button id="btnViewArchives" class="btn btn--secondary" type="button">Séance & tournois supprimé</button>
+      <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un membre</button>
+      <button id="btnViewArchives" class="btn btn--secondary" type="button">Séances & tournois supprimés</button>
     </section>
 
     <!-- Zone formulaire séance (affichée après choix date) -->
     <section id="liveSessionSection" class="card hidden" aria-live="polite">
-      <div class="card__head">
-        <div>
+      <div class="card__head" style="flex-wrap: wrap; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 16px;">
           <h2 class="h2">Séance en cours</h2>
-          <div class="muted">
-            Date : <span id="liveSessionDateLabel"></span>
-          </div>
+          <span class="h2" id="liveSessionDateLabel"></span>
         </div>
-        <div class="pill" id="liveSessionStatus">En préparation</div>
+        <div style="display: flex; gap: 12px; margin-left: auto; align-items: center;">
+          <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
+          <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
+        </div>
+        <div class="pill" id="liveSessionStatus"></div>
       </div>
 
-      <div class="toolbar">
-        <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
+      <div class="toolbar" style="display: none;">
         <div class="spacer"></div>
-        <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
       </div>
 
       <div class="tableWrap">
