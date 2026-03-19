@@ -161,13 +161,29 @@ const btnReset = document.getElementById("btnReset");
    Ranking (cumul)
 ========================= */
 
-function computeTotalsByPlayer() {
-  // total = somme totalPoints de chaque séance
+function computePlacementPointsByPlayer() {
+  // total = somme placementPoints de chaque séance
   const map = new Map(); // name => points
   for (const s of sessions) {
     for (const r of s.rows) {
       const cur = map.get(r.playerName) ?? 0;
-      map.set(r.playerName, cur + (r.totalPoints ?? 0));
+      map.set(r.playerName, cur + (r.placementPoints ?? 0));
+    }
+  }
+  // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
+  for (const p of players) {
+    if (!map.has(p)) map.set(p, 0);
+  }
+  return map;
+}
+
+function computeLXPPointsByPlayer() {
+  // total = somme lxp de chaque séance
+  const map = new Map(); // name => lxp
+  for (const s of sessions) {
+    for (const r of s.rows) {
+      const cur = map.get(r.playerName) ?? 0;
+      map.set(r.playerName, cur + (r.lxp ?? 0));
     }
   }
   // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
@@ -178,10 +194,16 @@ function computeTotalsByPlayer() {
 }
 
 function renderRanking() {
-  const totals = computeTotalsByPlayer();
-  const list = Array.from(totals.entries()).map(([playerName, total]) => ({ playerName, total }));
+  const placementTotals = computePlacementPointsByPlayer();
+  const lxpTotals = computeLXPPointsByPlayer();
+  
+  const list = Array.from(placementTotals.entries()).map(([playerName, placementPoints]) => ({
+    playerName,
+    placementPoints,
+    lxpPoints: lxpTotals.get(playerName) ?? 0,
+  }));
 
-  list.sort((a, b) => b.total - a.total || a.playerName.localeCompare(b.playerName, "fr"));
+  list.sort((a, b) => b.placementPoints - a.placementPoints || a.playerName.localeCompare(b.playerName, "fr"));
 
   const shown = rankingExpanded ? list : list.slice(0, 10);
 
@@ -190,7 +212,8 @@ function renderRanking() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="rankPos">${idx + 1}</td>
-      <td class="points">${row.total}</td>
+      <td class="points">${row.placementPoints}</td>
+      <td class="points">${row.lxpPoints}</td>
       <td class="playerName">${escapeHTML(row.playerName)}</td>
     `;
     rankingBody.appendChild(tr);
@@ -462,6 +485,11 @@ function recalcLiveSession(forceFinalize = false) {
   // winner = 1
   // autres = tri par eliminatedAt desc (éliminé plus tard => meilleure position)
   winner.position = 1;
+
+  // Calculer le LXP du gagnant (du arrivedAt jusqu'à maintenant)
+  if (winner.arrivedAt) {
+    winner.lxp = computeLXP(winner.arrivedAt, Date.now());
+  }
 
   // sécurité: tous les éliminés doivent avoir eliminatedAt
   const elimSorted = eliminated
