@@ -48,7 +48,7 @@ body{
 .brand__title{ font-weight:800; letter-spacing:.2px; }
 .brand__sub{ font-size:13px; color:var(--muted); margin-top:2px; }
 
-.page{ padding:22px 0 40px; display:grid; gap:18px; }
+.page{ padding:22px 0 40px; display:grid; gap:64px; }
 
 .card{
   background:var(--card);
@@ -256,7 +256,7 @@ body{
   color:var(--muted);
   font-weight:800;
 }
-input[type="date"], input[type="text"], select{
+input[type="date"], input[type="text"], input[type="number"], select{
   padding:10px 12px;
   border:1px solid var(--line);
   border-radius:12px;
@@ -277,7 +277,7 @@ select {
   padding-right: 36px;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, select:focus{
+input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus{
   border-color:#94a3b8;
   box-shadow: 0 0 0 4px rgba(148,163,184,.25);
 }
@@ -327,7 +327,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus{
   align-items:flex-start;
   justify-content:space-between;
   gap:12px;
-  border-bottom:1px solid var(--line);
 }
 .modal__title{ font-weight:900; }
 .modal__body{ padding:14px 16px; }
@@ -336,7 +335,6 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus{
   display:flex;
   justify-content:flex-end;
   gap:10px;
-  border-top:1px solid var(--line);
 }
 
 .detailTop{

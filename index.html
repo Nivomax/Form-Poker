@@ -27,10 +27,48 @@
   <main class="container page">
     <!-- Boutons Ouvrir séance et Ajouter membre -->
     <section class="card card--action">
-      <button id="btnOpenSession" class="btn btn--primary" type="button">Ouvrir une séance</button>
+      <button id="btnOpenSession" class="btn btn--secondary" type="button">Ouvrir une séance</button>
       <button id="btnWinnerTournament" class="btn btn--secondary" type="button">Gagnant tournoi</button>
       <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un membre au classement</button>
-      <button id="btnViewArchives" class="btn btn--secondary" type="button">Séance/tournois supprimé</button>
+      <button id="btnViewArchives" class="btn btn--secondary" type="button">Séance & tournois supprimé</button>
+    </section>
+
+    <!-- Zone formulaire séance (affichée après choix date) -->
+    <section id="liveSessionSection" class="card hidden" aria-live="polite">
+      <div class="card__head">
+        <div>
+          <h2 class="h2">Séance en cours</h2>
+          <div class="muted">
+            Date : <span id="liveSessionDateLabel"></span>
+          </div>
+        </div>
+        <div class="pill" id="liveSessionStatus">En préparation</div>
+      </div>
+
+      <div class="toolbar">
+        <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
+        <div class="spacer"></div>
+        <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
+      </div>
+
+      <div class="tableWrap">
+        <table class="table" aria-label="Formulaire de séance">
+          <thead>
+            <tr>
+              <th style="min-width:150px">Membre</th>
+              <th style="min-width:100px">Arrivée</th>
+              <th style="min-width:100px">Élimination</th>
+              <th style="min-width:60px">LXP</th>
+              <th style="min-width:50px">Position</th>
+              <th style="min-width:70px">Points</th>
+              <th style="min-width:70px">Total séance</th>
+              <th style="min-width:110px">Action</th>
+            </tr>
+          </thead>
+          <tbody id="liveSessionBody"></tbody>
+        </table>
+      </div>
+
     </section>
 
     <!-- Classement et Historique côte à côte -->
@@ -81,50 +119,13 @@
       </div>
     </div>
 
-    <!-- Zone formulaire séance (affichée après choix date) -->
-    <section id="liveSessionSection" class="card hidden" aria-live="polite">
-      <div class="card__head">
-        <div>
-          <h2 class="h2">Séance en cours</h2>
-          <div class="muted">
-            Date : <span id="liveSessionDateLabel"></span>
-          </div>
-        </div>
-        <div class="pill" id="liveSessionStatus">En préparation</div>
-      </div>
-
-      <div class="toolbar">
-        <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
-        <div class="spacer"></div>
-        <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
-      </div>
-
-      <div class="tableWrap">
-        <table class="table" aria-label="Formulaire de séance">
-          <thead>
-            <tr>
-              <th style="min-width:150px">Membre</th>
-              <th style="min-width:100px">Arrivée</th>
-              <th style="min-width:100px">Élimination</th>
-              <th style="min-width:60px">LXP</th>
-              <th style="min-width:50px">Position</th>
-              <th style="min-width:70px">Points</th>
-              <th style="min-width:70px">Total séance</th>
-              <th style="min-width:110px">Action</th>
-            </tr>
-          </thead>
-          <tbody id="liveSessionBody"></tbody>
-        </table>
-      </div>
-
-    </section>
   </main>
 
 
   <!-- Modal ajouter membre -->
-  <dialog id="addPlayerModal" class="modal">
-    <form method="dialog" class="modal__card">
-      <div class="modal__head">
+  <dialog id="addPlayerModal" class="modal" style="width: 30em;">
+    <form method="dialog" class="modal__card" style="padding: 16px;">
+      <div class="modal__head" style="align-items: center;">
         <div>
           <div class="modal__title">Ajouter un membre</div>
         </div>
@@ -133,16 +134,13 @@
 
       <div class="modal__body">
         <label class="field">
-          <span>Prénom</span>
-          <input id="playerFirstName" type="text" placeholder="Ex: Jean" />
+          <input id="playerFirstName" type="text" placeholder="Prénom" />
         </label>
         <label class="field">
-          <span>Nom</span>
-          <input id="playerLastName" type="text" placeholder="Ex: Dupont" />
+          <input id="playerLastName" type="text" placeholder="Nom" />
         </label>
         <label class="field">
-          <span>Numéro étudiant</span>
-          <input id="playerStudentNum" type="text" placeholder="Ex: 12345" />
+          <input id="playerStudentNum" type="number" placeholder="Numéro étudiant" />
         </label>
       </div>
 
@@ -154,9 +152,9 @@
   </dialog>
 
   <!-- Modal choix date -->
-  <dialog id="dateModal" class="modal">
-    <form method="dialog" class="modal__card">
-      <div class="modal__head">
+  <dialog id="dateModal" class="modal" style="width: 30em;">
+    <form method="dialog" class="modal__card" style="padding: 16px;">
+      <div class="modal__head" style="align-items: center;">
         <div>
           <div class="modal__title">Ouvrir une séance</div>
         </div>
@@ -164,8 +162,7 @@
       </div>
 
       <div class="modal__body">
-        <label class="field">
-          <span>Date</span>
+        <label class="field" style="border: none;">
           <input id="sessionDateInput" type="date" />
         </label>
       </div>
@@ -180,10 +177,9 @@
   <!-- Modal détail séance -->
   <dialog id="detailModal" class="modal">
     <form method="dialog" class="modal__card modal__card--wide">
-      <div class="modal__head">
-        <div>
+      <div class="modal__head" style="align-items: center;">
+        <div style="flex: 1; display: flex; align-items: center;">
           <div class="modal__title">Détail de séance</div>
-          <div class="muted">Lecture seule</div>
         </div>
         <button class="iconBtn" value="close" aria-label="Fermer">✕</button>
       </div>
@@ -224,9 +220,9 @@
   </dialog>
 
   <!-- Modal gagnant tournoi -->
-  <dialog id="tournamentModal" class="modal">
-    <form method="dialog" class="modal__card">
-      <div class="modal__head">
+  <dialog id="tournamentModal" class="modal" style="width: 30em;">
+    <form method="dialog" class="modal__card" style="padding: 16px;">
+      <div class="modal__head" style="align-items: center;">
         <div>
           <div class="modal__title">Ajouter un gagnant tournoi</div>
         </div>
@@ -235,13 +231,11 @@
 
       <div class="modal__body">
         <label class="field">
-          <span>Gagnant</span>
           <select id="tournamentWinner">
             <option value="">-- Sélectionner un membre --</option>
           </select>
         </label>
         <label class="field">
-          <span>Date</span>
           <input id="tournamentDate" type="date" />
         </label>
       </div>
@@ -254,9 +248,9 @@
   </dialog>
 
   <!-- Modal archives (séances/tournois supprimés) -->
-  <dialog id="archivesModal" class="modal">
-    <form method="dialog" class="modal__card modal__card--wide">
-      <div class="modal__head">
+  <dialog id="archivesModal" class="modal" style="width: 40em;">
+    <form method="dialog" class="modal__card modal__card--wide" style="padding: 16px;">
+      <div class="modal__head" style="align-items: center;">
         <div>
           <div class="modal__title">Séances & Tournois supprimés</div>
         </div>
