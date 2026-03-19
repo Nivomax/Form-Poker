@@ -886,23 +886,22 @@ function renderLiveSession() {
       const hasWinner = liveSession.rows.some(x => x.status === "winner");
 
       if (activeCount === 1 && !hasWinner) {
-        actionHTML = `<button class="btn btn--primary" type="button" data-action="winner" data-row="${r.rowId}">Gagnant</button>`;
+        actionHTML = `<button class="btn btn--winner" type="button" data-action="winner" data-row="${r.rowId}">Gagnant</button>`;
       } else {
-        actionHTML = `<button class="btn btn--secondary" type="button" data-action="eliminate" data-row="${r.rowId}">Éliminer</button>`;
+        actionHTML = `<button class="btn btn--eliminate" type="button" data-action="eliminate" data-row="${r.rowId}">Éliminer</button>`;
       }
     } else {
       actionHTML = `<span class="muted">—</span>`;
     }
 
     tr.innerHTML = `
+      <td>${actionHTML}</td>
       <td>${playerCellHTML}</td>
       <td>${r.arrivedAt ? formatTime(r.arrivedAt) : "—"}</td>
       <td>${r.eliminatedAt ? formatTime(r.eliminatedAt) : "—"}</td>
       <td class="points">${r.lxp ?? 0}</td>
       <td class="points">${r.position ?? "—"}</td>
       <td class="points">${r.placementPoints ?? 0}</td>
-      <td class="points">${r.totalPoints ?? 0}</td>
-      <td>${actionHTML}</td>
     `;
 
     liveSessionBody.appendChild(tr);

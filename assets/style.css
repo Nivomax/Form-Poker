@@ -97,6 +97,7 @@ body{
   box-shadow: 0 10px 22px rgba(15,23,42,.18);
 }
 .btn--primary:hover{ box-shadow: 0 14px 26px rgba(15,23,42,.22); }
+.btn--primary.no-hover:hover{ box-shadow: 0 10px 22px rgba(15,23,42,.18); }
 .btn--secondary{
   background:#f1f5f9;
   border-color:#e2e8f0;
@@ -109,6 +110,18 @@ body{
   color:#0f172a;
 }
 .btn--ghost:hover{ background:#f8fafc; }
+.btn--winner{
+  background:#dcfce7;
+  border-color:#bbf7d0;
+  color:#166534;
+}
+.btn--winner:hover{ background:#bbf7d0; }
+.btn--eliminate{
+  background:#fee2e2;
+  border-color:#fecaca;
+  color:#991b1b;
+}
+.btn--eliminate:hover{ background:#fecaca; }
 
 .iconBtn{
   border:1px solid var(--line);
@@ -175,7 +188,7 @@ body{
 .layoutTwoColumns{
   display:grid;
   grid-template-columns: 7fr 3fr;
-  gap:18px;
+  gap:60px;
   align-items: start;
 }
 .historyColumn{

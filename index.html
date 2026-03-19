@@ -41,7 +41,7 @@
           <span class="h2" id="liveSessionDateLabel"></span>
         </div>
         <div style="display: flex; gap: 12px; margin-left: auto; align-items: center;">
-          <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
+          <button id="btnCloseSession" class="btn btn--primary no-hover hidden" type="button">Clôturer la séance</button>
           <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
         </div>
         <div class="pill" id="liveSessionStatus"></div>
@@ -55,14 +55,13 @@
         <table class="table" aria-label="Formulaire de séance">
           <thead>
             <tr>
+              <th style="min-width:110px">Action</th>
               <th style="min-width:150px">Membre</th>
               <th style="min-width:100px">Arrivée</th>
               <th style="min-width:100px">Élimination</th>
               <th style="min-width:60px">LXP</th>
               <th style="min-width:50px">Position</th>
               <th style="min-width:70px">Points</th>
-              <th style="min-width:70px">Total séance</th>
-              <th style="min-width:110px">Action</th>
             </tr>
           </thead>
           <tbody id="liveSessionBody"></tbody>
