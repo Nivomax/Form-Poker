@@ -265,6 +265,9 @@ function renderSessionsGrid() {
   }
 
   for (const s of sorted) {
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+
     const div = document.createElement("button");
     div.type = "button";
     div.className = "sessionCard";
@@ -275,7 +278,22 @@ function renderSessionsGrid() {
       <div class="sessionCard__sub">${count} participant(s)</div>
     `;
     div.addEventListener("click", () => openSessionDetail(s.id));
-    sessionsGrid.appendChild(div);
+
+    const btnDelete = document.createElement("button");
+    btnDelete.type = "button";
+    btnDelete.className = "sessionCard__delete";
+    btnDelete.textContent = "✕";
+    btnDelete.title = "Supprimer cette séance";
+    btnDelete.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm("Êtes-vous sûr de vouloir supprimer cette séance ?")) {
+        deleteSession(s.id);
+      }
+    });
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(btnDelete);
+    sessionsGrid.appendChild(wrapper);
   }
 }
 
@@ -331,6 +349,9 @@ function renderTournamentsGrid() {
   }
 
   for (const t of sorted) {
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+
     const div = document.createElement("button");
     div.type = "button";
     div.className = "sessionCard";
@@ -341,7 +362,22 @@ function renderTournamentsGrid() {
       <div class="sessionCard__date">${dateStr}</div>
       <div class="sessionCard__sub">${escapeHTML(t.winner)}</div>
     `;
-    tournamentsGrid.appendChild(div);
+
+    const btnDelete = document.createElement("button");
+    btnDelete.type = "button";
+    btnDelete.className = "sessionCard__delete";
+    btnDelete.textContent = "✕";
+    btnDelete.title = "Supprimer ce tournoi";
+    btnDelete.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce tournoi ?")) {
+        deleteTournament(t.id);
+      }
+    });
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(btnDelete);
+    tournamentsGrid.appendChild(wrapper);
   }
 }
 
@@ -370,6 +406,27 @@ function addTournamentWinner(winner, date) {
   };
 
   tournaments.push(tournament);
+  saveJSON(LS_KEYS.tournaments, tournaments);
+
+  renderTournamentsGrid();
+  renderRanking();
+}
+
+function deleteSession(sessionId) {
+  sessions = sessions.filter(s => s.id !== sessionId);
+  saveJSON(LS_KEYS.sessions, sessions);
+
+  if (liveSession && liveSession.id === sessionId) {
+    liveSession = null;
+    liveSessionSection.classList.add("hidden");
+  }
+
+  renderSessionsGrid();
+  renderRanking();
+}
+
+function deleteTournament(tournamentId) {
+  tournaments = tournaments.filter(t => t.id !== tournamentId);
   saveJSON(LS_KEYS.tournaments, tournaments);
 
   renderTournamentsGrid();
