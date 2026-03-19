@@ -48,7 +48,7 @@ body{
 .brand__title{ font-weight:800; letter-spacing:.2px; }
 .brand__sub{ font-size:13px; color:var(--muted); margin-top:2px; }
 
-.page{ padding:22px 0 40px; display:grid; gap:64px; }
+.page{ padding:40px 0 40px; display:grid; gap:64px; }
 
 .card{
   background:var(--card);
