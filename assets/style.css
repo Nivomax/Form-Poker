@@ -176,9 +176,6 @@ body{
   display:flex;
   gap:12px;
 }
-.card--action .btn{
-  flex:1;
-}
 .layoutTwoColumns{
   display:grid;
   grid-template-columns: 7fr 3fr;
