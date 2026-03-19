@@ -6,6 +6,8 @@ const LS_KEYS = {
   players: "poker_players_v1",
   sessions: "poker_sessions_v1",
   tournaments: "poker_tournaments_v1",
+  archivedSessions: "poker_archived_sessions_v1",
+  archivedTournaments: "poker_archived_tournaments_v1",
 };
 
 function loadJSON(key, fallback) {
@@ -99,6 +101,8 @@ ensureSeed();
 let players = loadJSON(LS_KEYS.players, []);
 let sessions = loadJSON(LS_KEYS.sessions, []);
 let tournaments = loadJSON(LS_KEYS.tournaments, []);
+let archivedSessions = loadJSON(LS_KEYS.archivedSessions, []);
+let archivedTournaments = loadJSON(LS_KEYS.archivedTournaments, []);
 
 let rankingExpanded = false;
 
@@ -165,6 +169,9 @@ const confirmAddTournament = document.getElementById("confirmAddTournament");
 const tournamentsGrid = document.getElementById("tournamentsGrid");
 
 const btnReset = document.getElementById("btnReset");
+const btnViewArchives = document.getElementById("btnViewArchives");
+const archivesModal = document.getElementById("archivesModal");
+const archivesContent = document.getElementById("archivesContent");
 
 /* =========================
    Ranking (cumul)
@@ -186,7 +193,7 @@ function computePlacementPointsByPlayer() {
       map.set(t.winner, cur + 250);
     }
   }
-  // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
+  // inclure membres qui n'ont jamais joué => 0 (optionnel)
   for (const p of players) {
     if (!map.has(p)) map.set(p, 0);
   }
@@ -202,7 +209,7 @@ function computeLXPPointsByPlayer() {
       map.set(r.playerName, cur + (r.lxp ?? 0));
     }
   }
-  // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
+  // inclure membres qui n'ont jamais joué => 0 (optionnel)
   for (const p of players) {
     if (!map.has(p)) map.set(p, 0);
   }
@@ -298,7 +305,8 @@ function renderSessionsGrid() {
 }
 
 function openSessionDetail(sessionId) {
-  const s = sessions.find(x => x.id === sessionId);
+  let s = sessions.find(x => x.id === sessionId);
+  if (!s) s = archivedSessions.find(x => x.id === sessionId);
   if (!s) return;
 
   detailDate.textContent = `${formatDateISOToFR(s.date)}`;
@@ -413,6 +421,12 @@ function addTournamentWinner(winner, date) {
 }
 
 function deleteSession(sessionId) {
+  const session = sessions.find(s => s.id === sessionId);
+  if (session) {
+    archivedSessions.push(session);
+    saveJSON(LS_KEYS.archivedSessions, archivedSessions);
+  }
+
   sessions = sessions.filter(s => s.id !== sessionId);
   saveJSON(LS_KEYS.sessions, sessions);
 
@@ -426,11 +440,164 @@ function deleteSession(sessionId) {
 }
 
 function deleteTournament(tournamentId) {
+  const tournament = tournaments.find(t => t.id === tournamentId);
+  if (tournament) {
+    archivedTournaments.push(tournament);
+    saveJSON(LS_KEYS.archivedTournaments, archivedTournaments);
+  }
+
   tournaments = tournaments.filter(t => t.id !== tournamentId);
   saveJSON(LS_KEYS.tournaments, tournaments);
 
   renderTournamentsGrid();
   renderRanking();
+}
+
+function restoreSession(sessionId) {
+  const session = archivedSessions.find(s => s.id === sessionId);
+  if (session) {
+    sessions.push(session);
+    saveJSON(LS_KEYS.sessions, sessions);
+    
+    archivedSessions = archivedSessions.filter(s => s.id !== sessionId);
+    saveJSON(LS_KEYS.archivedSessions, archivedSessions);
+    
+    renderSessionsGrid();
+    renderArchives();
+    renderRanking();
+  }
+}
+
+function restoreTournament(tournamentId) {
+  const tournament = archivedTournaments.find(t => t.id === tournamentId);
+  if (tournament) {
+    tournaments.push(tournament);
+    saveJSON(LS_KEYS.tournaments, tournaments);
+    
+    archivedTournaments = archivedTournaments.filter(t => t.id !== tournamentId);
+    saveJSON(LS_KEYS.archivedTournaments, archivedTournaments);
+    
+    renderTournamentsGrid();
+    renderArchives();
+    renderRanking();
+  }
+}
+
+function renderArchives() {
+  archivesContent.innerHTML = "";
+
+  if (archivedSessions.length === 0 && archivedTournaments.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.style.padding = "18px";
+    empty.textContent = "Aucun élément supprimé.";
+    archivesContent.appendChild(empty);
+    return;
+  }
+
+  // Sections supprimés
+  if (archivedSessions.length > 0) {
+    const sessionsTitle = document.createElement("h3");
+    sessionsTitle.textContent = "Séances supprimées";
+    sessionsTitle.style.marginTop = "0";
+    sessionsTitle.style.marginBottom = "12px";
+    archivesContent.appendChild(sessionsTitle);
+
+    const sessionsList = document.createElement("div");
+    sessionsList.style.marginBottom = "24px";
+
+    for (const s of archivedSessions) {
+      const div = document.createElement("div");
+      div.style.padding = "12px 18px";
+      div.style.borderBottom = "1px solid var(--line)";
+      div.style.display = "flex";
+      div.style.justifyContent = "space-between";
+      div.style.alignItems = "center";
+      div.style.gap = "12px";
+
+      const info = document.createElement("div");
+      info.innerHTML = `<strong>${formatDateISOToFR(s.date)}</strong> <span class="muted" style="font-size:12px;">${s.rows?.length ?? 0} participant(s)</span>`;
+      info.style.display = "flex";
+      info.style.alignItems = "center";
+      info.style.gap = "12px";
+
+      const buttonsContainer = document.createElement("div");
+      buttonsContainer.style.display = "flex";
+      buttonsContainer.style.gap = "8px";
+
+      const btnDetail = document.createElement("button");
+      btnDetail.type = "button";
+      btnDetail.className = "btn btn--secondary";
+      btnDetail.textContent = "Voir détail";
+      btnDetail.style.whiteSpace = "nowrap";
+      btnDetail.addEventListener("click", () => {
+        openSessionDetail(s.id);
+      });
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn--secondary";
+      btn.textContent = "Restaurer";
+      btn.style.whiteSpace = "nowrap";
+      btn.addEventListener("click", () => {
+        if (confirm("Restaurer cette séance ?")) {
+          restoreSession(s.id);
+        }
+      });
+
+      div.appendChild(info);
+      buttonsContainer.appendChild(btnDetail);
+      buttonsContainer.appendChild(btn);
+      div.appendChild(buttonsContainer);
+      sessionsList.appendChild(div);
+    }
+
+    archivesContent.appendChild(sessionsList);
+  }
+
+  // Tournois supprimés
+  if (archivedTournaments.length > 0) {
+    const tournamentsTitle = document.createElement("h3");
+    tournamentsTitle.textContent = "Tournois supprimés";
+    tournamentsTitle.style.marginTop = "0";
+    tournamentsTitle.style.marginBottom = "12px";
+    archivesContent.appendChild(tournamentsTitle);
+
+    const tournamentsList = document.createElement("div");
+
+    for (const t of archivedTournaments) {
+      const div = document.createElement("div");
+      div.style.padding = "12px 18px";
+      div.style.borderBottom = "1px solid var(--line)";
+      div.style.display = "flex";
+      div.style.justifyContent = "space-between";
+      div.style.alignItems = "center";
+      div.style.gap = "12px";
+
+      const info = document.createElement("div");
+      info.innerHTML = `<strong>${formatDateISOToFR(t.date)}</strong> <span class="muted" style="font-size:12px;">Gagnant: ${escapeHTML(t.winner)}</span>`;
+      info.style.display = "flex";
+      info.style.alignItems = "center";
+      info.style.gap = "12px";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn--secondary";
+      btn.textContent = "Restaurer";
+      btn.style.whiteSpace = "nowrap";
+      btn.addEventListener("click", () => {
+        if (confirm("Restaurer ce tournoi ?")) {
+          restoreTournament(t.id);
+        }
+      });
+
+      div.appendChild(info);
+      div.appendChild(btn);
+      tournamentsList.appendChild(div);
+    }
+
+    archivesContent.appendChild(tournamentsList);
+  }
 }
 
 /* =========================
@@ -473,13 +640,13 @@ function validateRow(rowId, playerName) {
   if (!liveSession) return;
 
   const name = (playerName ?? "").trim();
-  if (!name) return alert("Choisis un joueur.");
+  if (!name) return alert("Choisis un membre.");
 
   // empêcher doublons dans la séance
   const already = liveSession.rows.some(r => r.rowId !== rowId && r.playerName === name && r.status !== "draft");
-  if (already) return alert("Ce joueur est déjà présent dans la séance.");
+  if (already) return alert("Ce membre est déjà présent dans la séance.");
 
-  // si nouveau joueur (pas dans la liste globale) => on l'ajoute
+  // si nouveau membre (pas dans la liste globale) => on l'ajoute
   if (!players.includes(name)) {
     players.push(name);
     players.sort((a, b) => a.localeCompare(b, "fr"));
@@ -693,14 +860,14 @@ function renderLiveSession() {
     if (r.status === "eliminated") tagHTML = `<span class="rowTag tag--eliminated">Éliminé</span>`;
     if (r.status === "winner") tagHTML = `<span class="rowTag tag--winner">Gagnant</span>`;
 
-    // colonne joueur
+    // colonne membre
     let playerCellHTML = "";
     if (r.status === "draft") {
       const playerOptions = players.map(p => `<option value="${escapeHTMLAttr(p)}">${escapeHTML(p)}</option>`).join("");
       playerCellHTML = `
         <div class="field">
           <select data-role="playerSelect" data-row="${r.rowId}">
-            <option value="">-- Sélectionner un joueur --</option>
+            <option value="">-- Sélectionner un membre --</option>
             ${playerOptions}
           </select>
         </div>
@@ -714,7 +881,7 @@ function renderLiveSession() {
     if (r.status === "draft") {
       actionHTML = `<button class="btn btn--secondary" type="button" data-action="validate" data-row="${r.rowId}">Ajouter</button>`;
     } else if (r.status === "active") {
-      // si c'est le dernier joueur "active" ET aucun gagnant => bouton gagnant
+      // si c'est le dernier membre "active" ET aucun gagnant => bouton gagnant
       const activeCount = liveSession.rows.filter(x => x.status === "active").length;
       const hasWinner = liveSession.rows.some(x => x.status === "winner");
 
@@ -806,13 +973,13 @@ confirmAddPlayer.addEventListener("click", (e) => {
   
   const fullName = `${firstName} ${lastName}`;
   
-  // vérifier que le joueur n'existe pas déjà
+  // vérifier que le membre n'existe pas déjà
   if (players.includes(fullName)) {
-    alert("Ce joueur existe déjà.");
+    alert("Ce membre existe déjà.");
     return;
   }
   
-  // ajouter le joueur
+  // ajouter le membre
   players.push(fullName);
   saveJSON(LS_KEYS.players, players);
   
@@ -826,7 +993,7 @@ confirmAddPlayer.addEventListener("click", (e) => {
 btnWinnerTournament.addEventListener("click", () => {
   // remplir les listes de sélection
   const options = players.map(p => `<option value="${escapeHTMLAttr(p)}">${escapeHTML(p)}</option>`).join("");
-  tournamentWinner.innerHTML = `<option value="">-- Sélectionner un joueur --</option>${options}`;
+  tournamentWinner.innerHTML = `<option value="">-- Sélectionner un membre --</option>${options}`;
   
   tournamentWinner.value = "";
   tournamentDate.value = todayISO();
@@ -842,16 +1009,25 @@ tournamentModal.addEventListener("close", () => {
   addTournamentWinner(winner, date);
 });
 
+btnViewArchives.addEventListener("click", () => {
+  renderArchives();
+  archivesModal.showModal();
+});
+
 btnReset.addEventListener("click", () => {
-  const ok = confirm("Réinitialiser les données locales (joueurs + séances + tournois) ?");
+  const ok = confirm("Réinitialiser les données locales (membres + séances + tournois) ?");
   if (!ok) return;
   localStorage.removeItem(LS_KEYS.players);
   localStorage.removeItem(LS_KEYS.sessions);
   localStorage.removeItem(LS_KEYS.tournaments);
+  localStorage.removeItem(LS_KEYS.archivedSessions);
+  localStorage.removeItem(LS_KEYS.archivedTournaments);
   ensureSeed();
   players = loadJSON(LS_KEYS.players, []);
   sessions = loadJSON(LS_KEYS.sessions, []);
   tournaments = loadJSON(LS_KEYS.tournaments, []);
+  archivedSessions = loadJSON(LS_KEYS.archivedSessions, []);
+  archivedTournaments = loadJSON(LS_KEYS.archivedTournaments, []);
   rankingExpanded = false;
   liveSession = null;
   liveSessionSection.classList.add("hidden");

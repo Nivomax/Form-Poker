@@ -1,4 +1,4 @@
-// Liste de joueurs existants (exemple). Tu peux la modifier librement.
+// Liste de membres existants (exemple). Tu peux la modifier librement.
 window.SEED_PLAYERS = [
 ];
 

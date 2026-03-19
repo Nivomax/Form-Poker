@@ -25,11 +25,12 @@
   </header>
 
   <main class="container page">
-    <!-- Boutons Ouvrir séance et Ajouter joueur -->
+    <!-- Boutons Ouvrir séance et Ajouter membre -->
     <section class="card card--action">
       <button id="btnOpenSession" class="btn btn--primary" type="button">Ouvrir une séance</button>
       <button id="btnWinnerTournament" class="btn btn--secondary" type="button">Gagnant tournoi</button>
-      <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un joueur au classement</button>
+      <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un membre au classement</button>
+      <button id="btnViewArchives" class="btn btn--secondary" type="button">Séance/tournois supprimé</button>
     </section>
 
     <!-- Classement et Historique côte à côte -->
@@ -47,7 +48,7 @@
                 <th style="width:120px">Position</th>
                 <th style="width:120px">Points</th>
                 <th style="width:100px">LXP</th>
-                <th>Joueur</th>
+                <th>Membre</th>
               </tr>
             </thead>
             <tbody id="rankingBody"></tbody>
@@ -93,7 +94,7 @@
       </div>
 
       <div class="toolbar">
-        <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un joueur</button>
+        <button id="btnAddRow" class="btn btn--secondary" type="button">Rajouter un membre</button>
         <div class="spacer"></div>
         <button id="btnCloseSession" class="btn btn--primary hidden" type="button">Clôturer la séance</button>
       </div>
@@ -102,7 +103,7 @@
         <table class="table" aria-label="Formulaire de séance">
           <thead>
             <tr>
-              <th style="min-width:150px">Joueur</th>
+              <th style="min-width:150px">Membre</th>
               <th style="min-width:100px">Arrivée</th>
               <th style="min-width:100px">Élimination</th>
               <th style="min-width:60px">LXP</th>
@@ -120,12 +121,12 @@
   </main>
 
 
-  <!-- Modal ajouter joueur -->
+  <!-- Modal ajouter membre -->
   <dialog id="addPlayerModal" class="modal">
     <form method="dialog" class="modal__card">
       <div class="modal__head">
         <div>
-          <div class="modal__title">Ajouter un joueur</div>
+          <div class="modal__title">Ajouter un membre</div>
         </div>
         <button class="iconBtn" value="cancel" aria-label="Fermer">✕</button>
       </div>
@@ -203,7 +204,7 @@
           <table class="table" aria-label="Détail de séance">
             <thead>
               <tr>
-                <th>Joueur</th>
+                <th>Membre</th>
                 <th style="min-width:100px">Arrivée</th>
                 <th style="min-width:100px">Élimination</th>
                 <th style="min-width:60px">LXP</th>
@@ -236,7 +237,7 @@
         <label class="field">
           <span>Gagnant</span>
           <select id="tournamentWinner">
-            <option value="">-- Sélectionner un joueur --</option>
+            <option value="">-- Sélectionner un membre --</option>
           </select>
         </label>
         <label class="field">
@@ -248,6 +249,26 @@
       <div class="modal__foot">
         <button class="btn btn--ghost" value="cancel" type="submit">Annuler</button>
         <button id="confirmAddTournament" class="btn btn--primary" value="ok" type="submit">Ajouter</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal archives (séances/tournois supprimés) -->
+  <dialog id="archivesModal" class="modal">
+    <form method="dialog" class="modal__card modal__card--wide">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">Séances & Tournois supprimés</div>
+        </div>
+        <button class="iconBtn" value="close" aria-label="Fermer">✕</button>
+      </div>
+
+      <div class="modal__body">
+        <div id="archivesContent"></div>
+      </div>
+
+      <div class="modal__foot">
+        <button class="btn btn--primary" value="close" type="submit">Fermer</button>
       </div>
     </form>
   </dialog>

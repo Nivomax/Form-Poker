@@ -64,12 +64,8 @@ body{
   justify-content:space-between;
   gap:12px;
 }
-.card__foot{
-  padding:12px 18px 18px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+
+
 .h1{ margin:0; font-size:20px; }
 .h2{ margin:0; font-size:18px; }
 .muted{ color:var(--muted); font-size:13px; }
@@ -180,6 +176,7 @@ body{
   display:grid;
   grid-template-columns: 7fr 3fr;
   gap:18px;
+  align-items: start;
 }
 .historyColumn{
   display:grid;
