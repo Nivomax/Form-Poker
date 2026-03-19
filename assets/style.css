@@ -181,7 +181,7 @@ body{
 }
 .layoutTwoColumns{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 7fr 3fr;
   gap:18px;
 }
 @media (max-width: 900px){
