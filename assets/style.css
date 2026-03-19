@@ -221,6 +221,10 @@ body{
 .field{
   display:grid;
   gap:6px;
+  margin-bottom:16px;
+}
+.field:last-child{
+  margin-bottom:0;
 }
 .field span{
   font-size:12px;
