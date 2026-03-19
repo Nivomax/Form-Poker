@@ -710,6 +710,16 @@ function markWinner(rowId) {
   renderLiveSession();
 }
 
+function deleteRow(rowId) {
+  if (!liveSession) return;
+  const index = liveSession.rows.findIndex(r => r.rowId === rowId);
+  if (index === -1) return;
+
+  liveSession.rows.splice(index, 1);
+  recalcLiveSession();
+  renderLiveSession();
+}
+
 function canCloseSession() {
   if (!liveSession) return false;
   const active = liveSession.rows.filter(r => r.status === "active");
@@ -900,6 +910,8 @@ function renderLiveSession() {
     let actionHTML = "";
     if (r.status === "draft") {
       actionHTML = `<button class="btn btn--secondary" type="button" data-action="validate" data-row="${r.rowId}">Ajouter</button>`;
+      // ajouter bouton de suppression pour les brouillons
+      actionHTML += ` <button class="btn btn--ghost" type="button" data-action="delete" data-row="${r.rowId}" style="padding: 10px 8px; color: #ef4444;">✕</button>`;
     } else if (r.status === "active") {
       // si c'est le dernier membre "active" ET aucun gagnant => bouton gagnant
       const activeCount = liveSession.rows.filter(x => x.status === "active").length;
@@ -941,6 +953,7 @@ function renderLiveSession() {
       }
       if (action === "eliminate") eliminateRow(rowId);
       if (action === "winner") markWinner(rowId);
+      if (action === "delete") deleteRow(rowId);
     });
   });
 
