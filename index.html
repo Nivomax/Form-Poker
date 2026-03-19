@@ -28,6 +28,7 @@
     <!-- Boutons Ouvrir séance et Ajouter joueur -->
     <section class="card card--action">
       <button id="btnOpenSession" class="btn btn--primary" type="button">Ouvrir une séance</button>
+      <button id="btnWinnerTournament" class="btn btn--secondary" type="button">Gagnant tournoi</button>
       <button id="btnAddPlayer" class="btn btn--secondary" type="button">Ajouter un joueur au classement</button>
     </section>
 
@@ -68,6 +69,15 @@
         <div id="sessionsGrid" class="sessionsList" aria-label="Historique des séances"></div>
       </section>
     </div>
+
+    <!-- Historique des tournois -->
+    <section class="card">
+      <div class="card__head">
+        <h2 class="h2">Historique des tournois</h2>
+      </div>
+
+      <div id="tournamentsGrid" class="sessionsList" aria-label="Historique des tournois"></div>
+    </section>
 
     <!-- Zone formulaire séance (affichée après choix date) -->
     <section id="liveSessionSection" class="card hidden" aria-live="polite">
@@ -207,6 +217,36 @@
 
       <div class="modal__foot">
         <button class="btn btn--primary" value="close" type="submit">Fermer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal gagnant tournoi -->
+  <dialog id="tournamentModal" class="modal">
+    <form method="dialog" class="modal__card">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">Ajouter un gagnant tournoi</div>
+        </div>
+        <button class="iconBtn" value="cancel" aria-label="Fermer">✕</button>
+      </div>
+
+      <div class="modal__body">
+        <label class="field">
+          <span>Gagnant</span>
+          <select id="tournamentWinner">
+            <option value="">-- Sélectionner un joueur --</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Date</span>
+          <input id="tournamentDate" type="date" />
+        </label>
+      </div>
+
+      <div class="modal__foot">
+        <button class="btn btn--ghost" value="cancel" type="submit">Annuler</button>
+        <button id="confirmAddTournament" class="btn btn--primary" value="ok" type="submit">Ajouter</button>
       </div>
     </form>
   </dialog>

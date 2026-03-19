@@ -5,6 +5,7 @@
 const LS_KEYS = {
   players: "poker_players_v1",
   sessions: "poker_sessions_v1",
+  tournaments: "poker_tournaments_v1",
 };
 
 function loadJSON(key, fallback) {
@@ -97,6 +98,7 @@ ensureSeed();
 
 let players = loadJSON(LS_KEYS.players, []);
 let sessions = loadJSON(LS_KEYS.sessions, []);
+let tournaments = loadJSON(LS_KEYS.tournaments, []);
 
 let rankingExpanded = false;
 
@@ -155,6 +157,13 @@ const detailDate = document.getElementById("detailDate");
 const detailCount = document.getElementById("detailCount");
 const detailBody = document.getElementById("detailBody");
 
+const btnWinnerTournament = document.getElementById("btnWinnerTournament");
+const tournamentModal = document.getElementById("tournamentModal");
+const tournamentWinner = document.getElementById("tournamentWinner");
+const tournamentDate = document.getElementById("tournamentDate");
+const confirmAddTournament = document.getElementById("confirmAddTournament");
+const tournamentsGrid = document.getElementById("tournamentsGrid");
+
 const btnReset = document.getElementById("btnReset");
 
 /* =========================
@@ -162,12 +171,19 @@ const btnReset = document.getElementById("btnReset");
 ========================= */
 
 function computePlacementPointsByPlayer() {
-  // total = somme placementPoints de chaque séance
+  // total = somme placementPoints de chaque séance + 250 par tournoi gagné
   const map = new Map(); // name => points
   for (const s of sessions) {
     for (const r of s.rows) {
       const cur = map.get(r.playerName) ?? 0;
       map.set(r.playerName, cur + (r.placementPoints ?? 0));
+    }
+  }
+  // ajouter 250 points par victoire en tournoi
+  for (const t of tournaments) {
+    if (t.winner) {
+      const cur = map.get(t.winner) ?? 0;
+      map.set(t.winner, cur + 250);
     }
   }
   // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
@@ -296,6 +312,76 @@ function openSessionDetail(sessionId) {
   }
 
   detailModal.showModal();
+}
+
+/* =========================
+   Tournaments
+========================= */
+
+function renderTournamentsGrid() {
+  tournamentsGrid.innerHTML = "";
+
+  const sorted = [...tournaments].sort((a, b) => {
+    // tri par date desc
+    const da = a.date ?? "";
+    const db = b.date ?? "";
+    if (da !== db) return db.localeCompare(da);
+    return (b.createdAt ?? 0) - (a.createdAt ?? 0);
+  });
+
+  if (sorted.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.style.padding = "0 18px 18px";
+    empty.textContent = "Aucun tournoi enregistré.";
+    tournamentsGrid.appendChild(empty);
+    return;
+  }
+
+  for (const t of sorted) {
+    const div = document.createElement("button");
+    div.type = "button";
+    div.className = "sessionCard";
+
+    const dateStr = formatDateISOToFR(t.date);
+
+    div.innerHTML = `
+      <div class="sessionCard__date">${dateStr}</div>
+      <div class="sessionCard__sub">${escapeHTML(t.winner)}</div>
+    `;
+    tournamentsGrid.appendChild(div);
+  }
+}
+
+function addTournamentWinner(winner, date) {
+  if (!winner) {
+    alert("Un gagnant est obligatoire.");
+    return;
+  }
+
+  if (!date) {
+    alert("Une date est obligatoire.");
+    return;
+  }
+
+  // vérifier que le gagnant existe
+  if (!players.includes(winner)) {
+    alert("Le gagnant n'existe pas.");
+    return;
+  }
+
+  const tournament = {
+    id: uid("tourn"),
+    winner,
+    date,
+    createdAt: Date.now(),
+  };
+
+  tournaments.push(tournament);
+  saveJSON(LS_KEYS.tournaments, tournaments);
+
+  renderTournamentsGrid();
+  renderRanking();
 }
 
 /* =========================
@@ -687,14 +773,35 @@ addPlayerModal.addEventListener("close", () => {
   renderRanking();
 });
 
+btnWinnerTournament.addEventListener("click", () => {
+  // remplir les listes de sélection
+  const options = players.map(p => `<option value="${escapeHTMLAttr(p)}">${escapeHTML(p)}</option>`).join("");
+  tournamentWinner.innerHTML = `<option value="">-- Sélectionner un joueur --</option>${options}`;
+  
+  tournamentWinner.value = "";
+  tournamentDate.value = todayISO();
+  tournamentModal.showModal();
+});
+
+tournamentModal.addEventListener("close", () => {
+  if (tournamentModal.returnValue !== "ok") return;
+  
+  const winner = tournamentWinner.value;
+  const date = tournamentDate.value;
+  
+  addTournamentWinner(winner, date);
+});
+
 btnReset.addEventListener("click", () => {
-  const ok = confirm("Réinitialiser les données locales (joueurs + séances) ?");
+  const ok = confirm("Réinitialiser les données locales (joueurs + séances + tournois) ?");
   if (!ok) return;
   localStorage.removeItem(LS_KEYS.players);
   localStorage.removeItem(LS_KEYS.sessions);
+  localStorage.removeItem(LS_KEYS.tournaments);
   ensureSeed();
   players = loadJSON(LS_KEYS.players, []);
   sessions = loadJSON(LS_KEYS.sessions, []);
+  tournaments = loadJSON(LS_KEYS.tournaments, []);
   rankingExpanded = false;
   liveSession = null;
   liveSessionSection.classList.add("hidden");
@@ -727,6 +834,7 @@ function escapeHTMLAttr(str) {
 function renderAll() {
   renderRanking();
   renderSessionsGrid();
+  renderTournamentsGrid();
 }
 
 renderAll();
