@@ -221,7 +221,7 @@ function renderRanking() {
 
   list.sort((a, b) => b.placementPoints - a.placementPoints || a.playerName.localeCompare(b.playerName, "fr"));
 
-  const shown = rankingExpanded ? list : list.slice(0, 10);
+  const shown = list;
 
   rankingBody.innerHTML = "";
   shown.forEach((row, idx) => {
@@ -235,17 +235,9 @@ function renderRanking() {
     rankingBody.appendChild(tr);
   });
 
-  const totalCount = list.length;
-  if (totalCount <= 10) {
-    btnSeeMore.classList.add("hidden");
-  } else {
-    btnSeeMore.classList.remove("hidden");
-    btnSeeMore.textContent = rankingExpanded ? "Voir moins" : "Voir plus";
-  }
-
-  rankingInfo.textContent = rankingExpanded
-    ? `${totalCount} joueurs affichés`
-    : `10 / ${totalCount} joueurs affichés`;
+  // Masquer le bouton et le texte
+  btnSeeMore.classList.add("hidden");
+  rankingInfo.textContent = "";
 }
 
 /* =========================
