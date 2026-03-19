@@ -61,23 +61,24 @@
       </section>
 
       <!-- Historique à droite -->
-      <section class="card">
-        <div class="card__head">
-          <h2 class="h2">Historique des séances</h2>
-        </div>
+      <div class="historyColumn">
+        <section class="card">
+          <div class="card__head">
+            <h2 class="h2">Historique des séances</h2>
+          </div>
 
-        <div id="sessionsGrid" class="sessionsList" aria-label="Historique des séances"></div>
-      </section>
-    </div>
+          <div id="sessionsGrid" class="sessionsList" aria-label="Historique des séances"></div>
+        </section>
 
-    <!-- Historique des tournois -->
-    <section class="card">
-      <div class="card__head">
-        <h2 class="h2">Historique des tournois</h2>
+        <section class="card">
+          <div class="card__head">
+            <h2 class="h2">Historique des tournois</h2>
+          </div>
+
+          <div id="tournamentsGrid" class="sessionsList" aria-label="Historique des tournois"></div>
+        </section>
       </div>
-
-      <div id="tournamentsGrid" class="sessionsList" aria-label="Historique des tournois"></div>
-    </section>
+    </div>
 
     <!-- Zone formulaire séance (affichée après choix date) -->
     <section id="liveSessionSection" class="card hidden" aria-live="polite">
