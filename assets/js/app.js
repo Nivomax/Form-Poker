@@ -170,7 +170,7 @@ function computeTotalsByPlayer() {
       map.set(r.playerName, cur + (r.totalPoints ?? 0));
     }
   }
-  // inclure joueurs qui n’ont jamais joué => 0 (optionnel)
+  // inclure joueurs qui n'ont jamais joué => 0 (optionnel)
   for (const p of players) {
     if (!map.has(p)) map.set(p, 0);
   }
@@ -392,7 +392,7 @@ function closeSession() {
   if (!liveSession) return;
 
   if (!canCloseSession()) {
-    return alert("La séance n’est pas terminée : il faut un gagnant et tous les autres éliminés.");
+    return alert("La séance n'est pas terminée : il faut un gagnant et tous les autres éliminés.");
   }
 
   // Construire séance persistée
@@ -548,7 +548,7 @@ function renderLiveSession() {
     if (r.status === "draft") {
       actionHTML = `<button class="btn btn--secondary" type="button" data-action="validate" data-row="${r.rowId}">Ajouter</button>`;
     } else if (r.status === "active") {
-      // si c’est le dernier joueur "active" ET aucun gagnant => bouton gagnant
+      // si c'est le dernier joueur "active" ET aucun gagnant => bouton gagnant
       const activeCount = liveSession.rows.filter(x => x.status === "active").length;
       const hasWinner = liveSession.rows.some(x => x.status === "winner");
 
